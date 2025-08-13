@@ -52,13 +52,11 @@ public class MainActivity extends AppCompatActivity {
     protected void setUpEventListeners() {
         // Done button
         Button done_button = findViewById(R.id.donebutton);
-        String today = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(
-                new Date()); // user date format: getDefault() inherits form host OS
         done_button.setOnClickListener((v) -> {
             // TODO: delete logs later
             System.out.println("Done button pressed");
 
-            updateVariables(DONE, today);
+            updateVariables(DONE);
         });
 
         // Reset button
@@ -79,17 +77,26 @@ public class MainActivity extends AppCompatActivity {
 
         String today = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(
                 new Date()); // user date format: getDefault() inherits form host OS
+        Date today_date = new Date();
+        String yesterday = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(
+                new Date(today_date.getTime() - 24 * 60 * 60 * 1000));
 
         // TODO: delete logs later
         System.out.println(last_date);
         System.out.println(today);
 
-        if (!today.equals(last_date)) {
-            updateVariables(RESET, "");
+        if (last_date.equals(yesterday)) {
+            updateVariables(RESET);
+        }
+        if (!last_date.equals(yesterday) && !last_date.equals(today)){
+            resetStreak();
         }
     }
 
-    protected void updateVariables(int type, String today) {
+    protected void updateVariables(int type) {
+        String today = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(
+                new Date());
+
         TextView main_text = findViewById(R.id.maintext);
         TextView days_streak_str = findViewById(R.id.days_streak_str);
         int days_streak = Integer.parseInt(shared_preferences.getString("days_streak_str", "0"));
@@ -104,5 +111,10 @@ public class MainActivity extends AppCompatActivity {
         else if (type == RESET) {
             main_text.setText(R.string.study);
         }
+    }
+
+    protected void resetStreak() {
+        TextView days_streak_str = findViewById(R.id.days_streak_str);
+        days_streak_str.setText("0");
     }
 }

@@ -3,7 +3,7 @@
     <string name="study">Study!</string>
     <string name="done">Done for today!</string>
     <string name="resetbtn">RESET</string>
-    <string name="studiedbtn">RESET</string>
+    <string name="studiedbtn">Done for today</string>
     <string name="zero">0</string>
     <string name="streaktxt">days streak</string>
 </resources>
