@@ -10,7 +10,6 @@ import android.content.pm.PackageManager;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
-import androidx.core.app.PendingIntentCompat;
 
 public class NotificationReceiver extends BroadcastReceiver {
     @Override
@@ -19,16 +18,15 @@ public class NotificationReceiver extends BroadcastReceiver {
         // TODO: delete logs later
         System.out.println("NotificationReceiver received");
 
-        // TODO: create NotificationChannel?
-
+        // Intent to open the main activity when the user taps the notif
         Intent i = new Intent(context, MainActivity.class);
         i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, i, PendingIntent.FLAG_IMMUTABLE);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, "duocomp")
+                .setSmallIcon(R.drawable.ic_android_black_24dp)
                 .setContentTitle("Practice!")
                 .setContentText("Don't reset your streak!")
-                .setAutoCancel(true)
                 .setDefaults(NotificationCompat.DEFAULT_ALL)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setContentIntent(pendingIntent);
@@ -42,5 +40,7 @@ public class NotificationReceiver extends BroadcastReceiver {
         }
         System.out.println("Building notification");
         notificationManagerCompat.notify(123, builder.build()); // fixed PID overwrites past notifs
+
+        ScheduleAlarm.setDailyAlarm(context);
     }
 }

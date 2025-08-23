@@ -1,5 +1,10 @@
 package com.lapps.duocomp;
 
+import android.Manifest;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.TextView;
@@ -7,6 +12,7 @@ import android.content.SharedPreferences;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -36,6 +42,11 @@ public class MainActivity extends AppCompatActivity {
 
         // Set up event listeners
         setUpEventListeners();
+
+        // Create the notification chanel as soon as the app starts
+        askForPermission();
+        createNotificationChannel();
+        ScheduleAlarm.setDailyAlarm(this);
     }
 
     @Override
@@ -116,5 +127,34 @@ public class MainActivity extends AppCompatActivity {
     protected void resetStreak() {
         TextView days_streak_str = findViewById(R.id.days_streak_str);
         days_streak_str.setText("0");
+    }
+
+    private void createNotificationChannel() {
+        // Create the NotificationChannel
+        // IMPORTANT: only on API 26+: NotificationChannel class is not in the Support Library
+        // TODO: check versions
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            CharSequence name = "Duocomp";
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            NotificationChannel channel = new NotificationChannel("duocomp", name, importance);
+            // Register the channel with the system
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
+    }
+
+    private void askForPermission(){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
+                    != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.POST_NOTIFICATIONS}, 1);
+            }
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.SCHEDULE_EXACT_ALARM)
+                    != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.SCHEDULE_EXACT_ALARM}, 1);
+            }
+        }
     }
 }
